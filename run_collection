@@ -1,0 +1,13 @@
+#!/bin/bash
+
+INSTALL_DIR=/opt/csg/diskmonitor
+OUTPUT_FILE=`tempfile -p diskmonitor`
+
+# Collect disk health data
+$INSTALL_DIR/bin/collector $OUTPUT_FILE
+
+# Upload the disk health data to the server
+$INSTALL_DIR/bin/diskmonitor_agent -h csgadmin -f $OUTPUT_FILE
+
+# Clean up the temp file with disk health data
+rm $OUTPUT_FILE
