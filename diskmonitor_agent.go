@@ -18,7 +18,7 @@ func main() {
     var server, port, file string
 
     // Fail if we do not have the correct number of arguments
-    if (len(os.Args) != 5) {
+    if (len(os.Args) != 7) {
         log.Fatalf("Usage: %s -h [server] -p [port] -f [collection file]\n", os.Args[0])
     }
 
