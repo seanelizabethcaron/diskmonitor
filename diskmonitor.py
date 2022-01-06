@@ -40,9 +40,10 @@ for host in hosts:
 
     toggle = 0
 
-    # user port fromhost time
+    # Convert hosts with hyphens back to their proper host name
+    displayhost = host[0].replace("_", "-")
 
-    print('<p>' + host[0] + '</p>')
+    print('<p>' + displayhost + '</p>')
     print('<table>')
     print('<tr><th>device</th><th>memberof_array</th><th>smart_health</th><th>raw_rd_err_rt</th><th>realloc_sec_ct</th><th>realloc_ev_ct</th><th>current_pending_ct</th><th>offline_uncorr_count</th><th>udma_crc_err_ct</th></tr>')
     for row in disks:
