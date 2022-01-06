@@ -8,13 +8,13 @@
 # [device name] [SMART overall status] [raw read error rt] [reallocated sector ct] [reallocated event ct] [current pending] [offline uncorrectable] [udma crc error ct]
 #
 
-outfile=$1
-
 # Check command line arguments
-if [ !$outfile ]; then
+if [ -z "$1" ]; then
         echo "Usage: $0 [output file]"
         exit
 fi
+
+outfile=$1
 
 # Gather data from each drive
 for drive in `lsscsi|grep -v PERC|grep -v HP|grep -v DVD|tr -s ' '| cut -f 7 -d ' '` ; do
