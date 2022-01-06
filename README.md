@@ -59,13 +59,13 @@ Edit /etc/rc.local to start the collector service:
 
 For client:
 
-Edit /opt/csg/diskmonitor/bin/run_collection to set the destination host for collections
+Edit /opt/csg/diskmonitor/bin/run_collection to set INSTALL_DIR.
 
 Edit crontab for root on each client to add a line such as:
 
 ```
 # Run Disk Monitor collection agent
-0 0 * * * /opt/csg/diskmonitor/bin/run_collection > /dev/null 2>&1
+0 0 * * * /opt/csg/diskmonitor/bin/run_collection csgadmin.csgstat.sph.umich.edu > /dev/null 2>&1
 ```
 
 Schema for host table:
