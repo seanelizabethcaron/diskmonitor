@@ -14,7 +14,7 @@ import (
 )
 
 func main() {
-    var serverFound, fileFound, nextArguIsFile, nextArguIsServer int
+    var serverFound, fileFound int
     var server, file string
 
     // Fail if we do not have the correct number of arguments
@@ -23,27 +23,14 @@ func main() {
     }
 
     // Filter out argument data
-    for _, argu := range os.Args {
-        if (nextArguIsServer == 1) {
-            server = argu
-            nextArguIsServer = 0
-            serverFound = 1
-        }
-
-        if (nextArguIsFile == 1) {
-            file = argu
-            nextArguIsFile = 0
-            fileFound = 1
-        }
-
-        if argu == "-h" {
-            nextArguIsServer = 1
-            continue
-        }
-
-        if argu == "-f" {
-            nextArguIsFile = 1
-            continue
+    for i := 1; i < len(os.Args); i++ {
+        switch os.Args[i] {
+            case "-h":
+                server = os.Args[i+1]
+                serverFound = 1
+            case "-f":
+                file = os.Args[i+1]
+                fileFound = 1
         }
     }
 
