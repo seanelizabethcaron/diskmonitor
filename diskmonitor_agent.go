@@ -14,12 +14,12 @@ import (
 )
 
 func main() {
-    var serverFound, fileFound int
+    var serverFound, portFound, fileFound int
     var server, file string
 
     // Fail if we do not have the correct number of arguments
     if (len(os.Args) != 5) {
-        log.Fatalf("Usage: %s -h [server] -f [collection file]\n", os.Args[0])
+        log.Fatalf("Usage: %s -h [server] -p [port] -f [collection file]\n", os.Args[0])
     }
 
     // Filter out argument data
@@ -28,6 +28,9 @@ func main() {
             case "-h":
                 server = os.Args[i+1]
                 serverFound = 1
+            case "-p":
+                port = os.Args[i+1]
+                portFound = 1
             case "-f":
                 file = os.Args[i+1]
                 fileFound = 1
@@ -35,8 +38,8 @@ func main() {
     }
 
     // Fail if a mandatory argument is missing
-    if ((serverFound != 1) || (fileFound != 1)) {
-        log.Fatalf("Usage: %s -h [server] -f [collection file]\n", os.Args[0])
+    if ((serverFound != 1) || (fileFound != 1) || (portFound != 1)) {
+        log.Fatalf("Usage: %s -h [server] -p [port] -f [collection file]\n", os.Args[0])
     }
 
     // Determine our hostname
@@ -67,7 +70,7 @@ func main() {
     // Open the connection to the collection host
     //
 
-    conn, err := net.Dial("tcp", server+":5963")
+    conn, err := net.Dial("tcp", server+":"+port)
     if err != nil {
         log.Fatalf("Error calling net.Dial()")
     }
