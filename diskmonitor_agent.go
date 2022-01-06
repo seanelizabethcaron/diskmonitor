@@ -15,7 +15,7 @@ import (
 
 func main() {
     var serverFound, portFound, fileFound int
-    var server, file string
+    var server, port, file string
 
     // Fail if we do not have the correct number of arguments
     if (len(os.Args) != 5) {
