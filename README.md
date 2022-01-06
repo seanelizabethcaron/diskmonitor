@@ -37,6 +37,37 @@ GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, REFERENCES, INDEX, ALTER, CR
   ON diskmonitor.* to 'diskmon'@'%';
 ```
 
+Installation:
+
+```
+git clone http://github.com/seantcaron/diskmonitor
+cd diskmonitor
+chmod +x install.sh
+./install.sh
+```
+
+For server:
+
+Edit configuration files to reflect the parameters that you used to set up the backing database.
+
+Edit /etc/rc.local to start the collector service:
+
+```
+# Start up Disk Monitor server
+/opt/csg/diskmonitor/bin/diskmonitor_server -f /opt/csg/diskmonitor/etc/diskmonitor_server.conf > /dev/null 2>&1 &
+```
+
+For client:
+
+Edit /opt/csg/diskmonitor/bin/run_collection to set the destination host for collections
+
+Edit crontab for root on each client to add a line such as:
+
+```
+# Run Disk Monitor collection agent
+0 0 * * * /opt/csg/diskmonitor/bin/run_collection > /dev/null 2>&1
+```
+
 Schema for host table:
 
 ```
