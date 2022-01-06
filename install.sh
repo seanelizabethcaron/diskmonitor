@@ -27,6 +27,8 @@ cp run_collection $INSTALL_DIR/diskmonitor/bin
 
 cp diskmonitor_server.conf $INSTALL_DIR/diskmonitor/etc
 cp dashboard.ini $INSTALL_DIR/diskmonitor/etc
+chmod 400 $INSTALL_DIR/diskmonitor/etc/*
 
 mkdir -p /usr/lib/cgi-bin/diskmonitor
 cp diskmonitor.py /usr/lib/cgi-bin/diskmonitor/diskmonitor
+chmod 755 /usr/lib/cgi-bin/diskmonitor/diskmonitor
