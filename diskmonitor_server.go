@@ -113,6 +113,9 @@ func handle_connection(c net.Conn) {
         data := strings.Fields(inp)
 
         host := data[0]
+        // MySQL will not accept table names with hyphens so convert to underscore
+        host = strings.ReplaceAll(host, "-", "_")
+        
         device := data[1]
         memberof_array := data[2]
         smart_health := data[3]
