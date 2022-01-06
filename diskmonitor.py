@@ -58,17 +58,17 @@ for host in hosts:
         print(row[3])
         print('</td><td>')
         print(row[4])
-        print('</td></tr>')
+        print('</td><td>')
         print(row[5])
-        print('</td></tr>')
+        print('</td><td>')
         print(row[6])
-        print('</td></tr>')
+        print('</td><td>')
         print(row[7])
-        print('</td></tr>')
+        print('</td><td>')
         print(row[8])
-        print('</td></tr>')
+        print('</td><td>')
         print(row[9])
-        print('</td></tr>')
+        print('</td><td>')
 
         toggle = not toggle
 
