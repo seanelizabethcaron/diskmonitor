@@ -15,7 +15,7 @@ DESTINATION_HOST=$1
 $INSTALL_DIR/bin/collector $OUTPUT_FILE
 
 # Upload the disk health data to the server
-$INSTALL_DIR/bin/diskmonitor_agent -h $DESTINATION_HOST -f $OUTPUT_FILE
+$INSTALL_DIR/bin/diskmonitor_agent -h $DESTINATION_HOST -p 5966 -f $OUTPUT_FILE
 
 # Clean up the temp file with disk health data
 rm $OUTPUT_FILE
