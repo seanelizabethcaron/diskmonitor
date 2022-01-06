@@ -36,7 +36,7 @@ for host in hosts:
 
     curs.execute(query)
 
-    utmps = curs.fetchall()
+    disks = curs.fetchall()
 
     toggle = 0
 
@@ -44,12 +44,15 @@ for host in hosts:
 
     print('<p>' + host[0] + '</p>')
     print('<table>')
-    print('<th><td>device</td><td>memberof_array</td><td>smart_health</td><td>raw_rd_err_rt</td><td>realloc_sec_ct</td><td>realloc_ev_ct</td><td>current_pending_ct</td><td>offline_uncorr_count</td><td>udma_crc_err_ct</td></th>')
-    for row in utmps:
-        if toggle == 0:
-            print('<tr bgcolor=#ccffcc><td>')
+    print('<tr><th>device</th><th>memberof_array</th><th>smart_health</th><th>raw_rd_err_rt</th><th>realloc_sec_ct</th><th>realloc_ev_ct</th><th>current_pending_ct</th><th>offline_uncorr_count</th><th>udma_crc_err_ct</th></tr>')
+    for row in disks:
+        if row[5] > 0 or row[6] > 0 or row[7] > 0 or row[8] > 0:
+            print('<tr bgcolor=#ff8080><td>')
         else:
-            print('<tr><td>')
+            if toggle == 0:
+                print('<tr bgcolor=#ccffcc><td>')
+            else:
+                print('<tr><td>')
 
         print(row[1])
         print('</td><td>')
@@ -68,7 +71,7 @@ for host in hosts:
         print(row[8])
         print('</td><td>')
         print(row[9])
-        print('</td><td>')
+        print('</td><tr>')
 
         toggle = not toggle
 
