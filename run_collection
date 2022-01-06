@@ -3,11 +3,19 @@
 INSTALL_DIR=/opt/csg/diskmonitor
 OUTPUT_FILE=`tempfile -p diskmonitor`
 
+# Check command line arguments
+if [ -z "$1" ]; then
+        echo "Usage: $0 [destination host]"
+        exit
+fi
+
+DESTINATION_HOST=$1
+
 # Collect disk health data
 $INSTALL_DIR/bin/collector $OUTPUT_FILE
 
 # Upload the disk health data to the server
-$INSTALL_DIR/bin/diskmonitor_agent -h csgadmin -f $OUTPUT_FILE
+$INSTALL_DIR/bin/diskmonitor_agent -h $DESTINATION_HOST -f $OUTPUT_FILE
 
 # Clean up the temp file with disk health data
 rm $OUTPUT_FILE
