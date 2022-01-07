@@ -10,10 +10,10 @@ print('<html>')
 print('<head>')
 print('<title>Disk Monitor</title>')
 print('<meta http-equiv="refresh" content="600">')
-print('<style type="text/css">* { border-radius: 5px; } h1 { font-family: Arial, Helvetica; } p { font-size: medium; font-weight: bold; font-family: Arial, Helvetica; width: 80%; margin: 10px auto; } table { height: 15%; margin: 10px auto; width: 80%; } td { 0px; font-family: Courier; }</style>')
+print('<style type="text/css">* { border-radius: 5px; } h1 { font-family: Arial, Helvetica; } h2 { font-family: Arial, Helvetica; } p { font-size: x-large; font-weight: bold; font-family: Arial, Helvetica; width: 80%; margin: 10px auto; } table { height: 15%; margin: 10px auto; width: 80%; } th { font-family: Arial, Helvetica; } td { 0px; font-family: Courier; }</style>')
 print('</head>')
-print('<body bgcolor=White text=Black vlink=Black text=Black>')
-print('<h1>Disk Monitor: ' + time.strftime("%A %b %d %H:%M:%S %Z", time.localtime()) + '</h1>')
+print('<body bgcolor=White text=Black vlink=Black link=Black>')
+print('<h2>Disk Monitor: ' + time.strftime("%A %b %d %H:%M:%S %Z", time.localtime()) + '</h2>')
 
 cfg = ConfigParser.ConfigParser()
 cfg.read('/opt/csg/diskmonitor/etc/dashboard.ini')
@@ -31,6 +31,15 @@ query = 'SELECT host,hostid from hosts ORDER BY host ASC;'
 curs.execute(query)
 hosts = curs.fetchall()
 
+print('<ul>')
+
+for host in hosts:
+    displayhost = host[0].replace("_", "-")
+
+    print('<li><font face="Arial, Helvetia"><a href=\"#' + displayhost + '\">' + displayhost + '</a></font></li>')
+
+print('</ul>')
+
 for host in hosts:
     query = 'SELECT * FROM ' + host[0] + ';'
 
@@ -40,15 +49,14 @@ for host in hosts:
 
     toggle = 0
 
-    # Convert hosts with hyphens back to their proper host name
     displayhost = host[0].replace("_", "-")
 
-    print('<p>' + displayhost + '</p>')
+    print('<p><a name=\"' + displayhost + '\">' + displayhost + '</a></p>')
     print('<table>')
     print('<tr><th>device</th><th>memberof_array</th><th>smart_health</th><th>raw_rd_err_rt</th><th>realloc_sec_ct</th><th>realloc_ev_ct</th><th>current_pending_ct</th><th>offline_uncorr_count</th><th>udma_crc_err_ct</th></tr>')
     for row in disks:
         if row[5] > 0 or row[6] > 0 or row[7] > 0 or row[8] > 0:
-            print('<tr bgcolor=#ff8080><td>')
+            print('<tr bgcolor=#ffcccc><td>')
         else:
             if toggle == 0:
                 print('<tr bgcolor=#ccffcc><td>')
