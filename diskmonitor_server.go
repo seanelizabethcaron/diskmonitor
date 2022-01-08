@@ -97,7 +97,7 @@ func main() {
 
 func handle_connection(c net.Conn) {
     var myDSN string
-    var runPerHostTasks int = 1
+    var runPerHostTasks bool = true
     
     // Connect to the database
     myDSN = dbUser + ":" + dbPass + "@tcp(" + dbHost + ":3306)/" + dbName
@@ -198,15 +198,15 @@ func handle_connection(c net.Conn) {
                 }
             }
             
-            runPerHostTasks = 0
+            runPerHostTasks = false
         }
         
         //
         // Add the most recent batch of disk data entries to the per-host disk data table
         //
 
-        dbCmd = "INSERT INTO " + host + " VALUES (" + tt + ",'" + device + "','" + memberof_array + "','" + smart_health + "'," + raw_rd_err_rt + "," + realloc_sec_ct + "," + realloc_ev_ct + "," + current_pending_ct + "," + offline_uncorr_ct + "," + udma_crc_err_ct + ");"
-        _, dbExecErr = dbconn.Exec(dbCmd)
+        dbCmd := "INSERT INTO " + host + " VALUES (" + tt + ",'" + device + "','" + memberof_array + "','" + smart_health + "'," + raw_rd_err_rt + "," + realloc_sec_ct + "," + realloc_ev_ct + "," + current_pending_ct + "," + offline_uncorr_ct + "," + udma_crc_err_ct + ");"
+        _, dbExecErr := dbconn.Exec(dbCmd)
         if dbExecErr != nil {
             log.Fatalf("Failed executing per-host disk table INSERT for host " + host)
         }
