@@ -97,14 +97,28 @@ func main() {
 
 func handle_connection(c net.Conn) {
     var myDSN string
+    var runPerHostTasks int = 1
+    
+    // Connect to the database
+    myDSN = dbUser + ":" + dbPass + "@tcp(" + dbHost + ":3306)/" + dbName
 
-    // Grab a line of input from the network connection
-    input := bufio.NewScanner(c)
+    dbconn, dbConnErr := sql.Open("mysql", myDSN)
+    if dbConnErr != nil {
+        log.Fatalf("Failed connecting to database")
+    }
+
+    dbPingErr := dbconn.Ping()
+    if dbPingErr != nil {         
+        log.Fatalf("Failed pinging database connection")
+    }
 
     // Generate a timestamp for these samples
     t := time.Now().Unix()
     tt := strconv.FormatInt(t, 10)
 
+    // Set up to read input from the network connection
+    input := bufio.NewScanner(c)
+    
     // For each line, parse it and insert it into the database where it needs to go
     for input.Scan() {
 
@@ -113,7 +127,7 @@ func handle_connection(c net.Conn) {
         data := strings.Fields(inp)
 
         host := data[0]
-        // MySQL will not accept table names with hyphens so convert to underscore
+        // MySQL will not accept table names with hyphens so convert hyphens in host names to underscore
         host = strings.ReplaceAll(host, "-", "_")
         
         device := data[1]
@@ -126,75 +140,67 @@ func handle_connection(c net.Conn) {
         offline_uncorr_ct := data[8]
         udma_crc_err_ct := data[9]
 
-        myDSN = dbUser + ":" + dbPass + "@tcp(" + dbHost + ":3306)/" + dbName
+        if (runPerHostTasks) {
+            //
+            // Check to see if the host exists in the host tracking table
+            //
 
-        dbconn, dbConnErr := sql.Open("mysql", myDSN)
-        if dbConnErr != nil {
-            log.Fatalf("Failed connecting to database")
-        }
+            dbCmd := "SELECT COUNT(*) FROM hosts WHERE host = '" + host + "';"
+            _, dbExecErr := dbconn.Exec(dbCmd)
+            if dbExecErr != nil {
+                log.Fatalf("Failed executing SELECT for host " + host)
+            }
 
-        dbPingErr := dbconn.Ping()
-        if dbPingErr != nil {
-            log.Fatalf("Failed pinging database connection")
-        }
+            var hostp string
+            _ = dbconn.QueryRow(dbCmd).Scan(&hostp)
+            hostpi, _ := strconv.Atoi(hostp)
 
-        //
-        // Check to see if the host exists in the host tracking table
-        //
+            //
+            // If not, add it to the hosts table. MySQL will generate an ID
+            //
 
-        dbCmd := "SELECT COUNT(*) FROM hosts WHERE host = '" + host + "';"
-        _, dbExecErr := dbconn.Exec(dbCmd)
-        if dbExecErr != nil {
-            log.Fatalf("Failed executing SELECT for host " + host)
-        }
+            if (hostpi == 0) {
+                dbCmd := "INSERT INTO hosts (host) VALUES ('" + host + "');"
+                _, dbExecErr = dbconn.Exec(dbCmd)
+                if dbExecErr != nil {
+                    log.Fatalf("Failed executing host table INSERT for host " + host)
+                }
+            }
 
-        var hostp string
-        _ = dbconn.QueryRow(dbCmd).Scan(&hostp)
-        hostpi, _ := strconv.Atoi(hostp)
+            // Check to see if a per-host disk data table exists for this host
 
-        //
-        // If not, add it to the hosts table. MySQL will generate an ID
-        //
-
-        if (hostpi == 0) {
-            dbCmd := "INSERT INTO hosts (host) VALUES ('" + host + "');"
+            dbCmd = "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '" + dbName + "' AND table_name = '" + host + "';"
             _, dbExecErr = dbconn.Exec(dbCmd)
             if dbExecErr != nil {
-                log.Fatalf("Failed executing host table INSERT for host " + host)
+                log.Fatalf("Failed executing SELECT FROM information_schema for host " + host)
             }
-        }
 
-        // Check to see if a per-host disk data table exists for this host
+            var phdt_ct string
+            _ = dbconn.QueryRow(dbCmd).Scan(&phdt_ct)
+            phdt_cti, _ := strconv.Atoi(phdt_ct)
 
-        dbCmd = "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '" + dbName + "' AND table_name = '" + host + "';"
-        _, dbExecErr = dbconn.Exec(dbCmd)
-        if dbExecErr != nil {
-            log.Fatalf("Failed executing SELECT FROM information_schema for host " + host)
-        }
+            //
+            // If not, create a per-host disk data table for the host
+            // If so, clear out any old entry in the per-host disk data table for this device
+            //
 
-        var phdt_ct string
-        _ = dbconn.QueryRow(dbCmd).Scan(&phdt_ct)
-        phdt_cti, _ := strconv.Atoi(phdt_ct)
-
-        //
-        // If not, create a per-host disk data table for the host
-        // If so, clear out any old entry in the per-host disk data table for this device
-        //
-
-        if (phdt_cti == 0) {
-            dbCmd := "CREATE TABLE " + host + " (sampletime bigint, device varchar(16), memberof_array varchar(16), smart_health varchar(16), raw_rd_err_rt integer, realloc_sec_ct integer, realloc_ev_ct integer, current_pending_ct integer, offline_uncorr_ct integer, udma_crc_err_ct integer);"
-            _, dbExecErr = dbconn.Exec(dbCmd)
-            if dbExecErr != nil {
-                log.Fatalf("Failed executing CREATE TABLE for host " + host)
+            if (phdt_cti == 0) {
+                dbCmd := "CREATE TABLE " + host + " (sampletime bigint, device varchar(16), memberof_array varchar(16), smart_health varchar(16), raw_rd_err_rt integer, realloc_sec_ct integer, realloc_ev_ct integer, current_pending_ct integer, offline_uncorr_ct integer, udma_crc_err_ct integer);"
+                _, dbExecErr = dbconn.Exec(dbCmd)
+                if dbExecErr != nil {
+                    log.Fatalf("Failed executing CREATE TABLE for host " + host)
+                }
+            } else {
+                dbCmd := "TRUNCATE TABLE " + host + ";"
+                _, dbExecErr = dbconn.Exec(dbCmd)
+                if dbExecErr != nil {
+                    log.Fatalf("Failed executing TRUNCATE for host " + host)
+                }
             }
-        } else {
-            dbCmd := "DELETE FROM " + host + " WHERE device = '" + device + "';"
-            _, dbExecErr = dbconn.Exec(dbCmd)
-            if dbExecErr != nil {
-                log.Fatalf("Failed executing TRUNCATE for host " + host)
-            }
+            
+            runPerHostTasks = 0
         }
-
+        
         //
         // Add the most recent batch of disk data entries to the per-host disk data table
         //
@@ -204,9 +210,9 @@ func handle_connection(c net.Conn) {
         if dbExecErr != nil {
             log.Fatalf("Failed executing per-host disk table INSERT for host " + host)
         }
-
-        dbconn.Close()
     }
 
+    dbconn.Close()
+    
     c.Close()
 }
