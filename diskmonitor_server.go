@@ -181,7 +181,7 @@ func handle_connection(c net.Conn) {
 
             //
             // If not, create a per-host disk data table for the host
-            // If so, clear out any old entry in the per-host disk data table for this device
+            // If so, clear out any old entries in the per-host disk data table
             //
 
             if (phdt_cti == 0) {
@@ -202,7 +202,7 @@ func handle_connection(c net.Conn) {
         }
         
         //
-        // Add the most recent batch of disk data entries to the per-host disk data table
+        // Add this line of disk data entries to the per-host disk data table
         //
 
         dbCmd := "INSERT INTO " + host + " VALUES (" + tt + ",'" + device + "','" + memberof_array + "','" + smart_health + "'," + raw_rd_err_rt + "," + realloc_sec_ct + "," + realloc_ev_ct + "," + current_pending_ct + "," + offline_uncorr_ct + "," + udma_crc_err_ct + ");"
