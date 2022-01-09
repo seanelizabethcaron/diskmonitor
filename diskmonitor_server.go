@@ -121,11 +121,14 @@ func handle_connection(c net.Conn) {
     
     // For each line, parse it and insert it into the database where it needs to go
     for input.Scan() {
-
         inp := input.Text()
-
         data := strings.Fields(inp)
 
+        // Skip malformed input lines
+        if (len(data) != 10) {
+            continue
+        }
+        
         host := data[0]
         // MySQL will not accept table names with hyphens so convert hyphens in host names to underscore
         host = strings.ReplaceAll(host, "-", "_")
