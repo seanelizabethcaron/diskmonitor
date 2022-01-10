@@ -53,9 +53,9 @@ for host in hosts:
 
     print('<p><a name=\"' + displayhost + '\">' + displayhost + '</a></p>')
     print('<table>')
-    print('<tr><th>device</th><th>memberof_array</th><th>smart_health</th><th>raw_rd_err_rt</th><th>realloc_sec_ct</th><th>realloc_ev_ct</th><th>current_pending_ct</th><th>offline_uncorr_count</th><th>udma_crc_err_ct</th></tr>')
+    print('<tr><th>device</th><th>memberof_array</th><th>smart_health</th><th>raw_rd_err_rt</th><th>realloc_sec_ct</th><th>realloc_ev_ct</th><th>current_pending_ct</th><th>offline_uncorr_ct</th><th>udma_crc_err_ct</th></tr>')
     for row in disks:
-        if row[5] > 0 or row[6] > 0 or row[7] > 0 or row[8] > 0:
+        if 'FAIL' in row[3] or row[5] > 0 or row[6] > 0 or row[7] > 0 or row[8] > 0:
             print('<tr bgcolor=#ffcccc><td>')
         else:
             if toggle == 0:
