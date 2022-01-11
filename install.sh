@@ -18,16 +18,16 @@ go get github.com/go-sql-driver/mysql
 
 go build diskmonitor_server.go
 
-mkdir -p $INSTALL_DIR/diskmonitor/{bin,etc}
+mkdir -p $INSTALL_DIR/{bin,etc}
 
-cp diskmonitor_agent $INSTALL_DIR/diskmonitor/bin
-cp diskmonitor_server $INSTALL_DIR/diskmonitor/bin
-cp collector $INSTALL_DIR/diskmonitor/bin
-cp run_collection $INSTALL_DIR/diskmonitor/bin
+cp diskmonitor_agent $INSTALL_DIR/bin
+cp diskmonitor_server $INSTALL_DIR/bin
+cp collector $INSTALL_DIR/bin
+cp run_collection $INSTALL_DIR/bin
 
-cp diskmonitor_server.conf $INSTALL_DIR/diskmonitor/etc
-cp dashboard.ini $INSTALL_DIR/diskmonitor/etc
-chmod 400 $INSTALL_DIR/diskmonitor/etc/*
+cp diskmonitor_server.conf $INSTALL_DIR/etc
+cp dashboard.ini $INSTALL_DIR/etc
+chmod 400 $INSTALL_DIR/etc/*
 
 mkdir -p /usr/lib/cgi-bin/diskmonitor
 cp diskmonitor.py /usr/lib/cgi-bin/diskmonitor/diskmonitor
