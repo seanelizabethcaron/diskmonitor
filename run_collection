@@ -1,6 +1,6 @@
 #!/bin/bash
 
-INSTALL_DIR=/opt/csg/diskmonitor
+INSTALL_DIR=/opt/csg
 OUTPUT_FILE=`tempfile -p diskmonitor`
 PORT=5966
 
