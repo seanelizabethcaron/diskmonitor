@@ -16,7 +16,7 @@ print('<body bgcolor=White text=Black vlink=Black link=Black>')
 print('<h2>Disk Monitor: ' + time.strftime("%A %b %d %H:%M:%S %Z", time.localtime()) + '</h2>')
 
 cfg = ConfigParser.ConfigParser()
-cfg.read('/opt/csg/diskmonitor/etc/dashboard.ini')
+cfg.read('/opt/csg/etc/dashboard.ini')
 
 dbuser = cfg.get('database', 'user')
 dbpass = cfg.get('database', 'passwd')
