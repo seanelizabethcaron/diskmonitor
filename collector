@@ -16,8 +16,10 @@ fi
 
 outfile=$1
 
+field_ct=`lsscsi | grep -Ev 'PERC|Dell|DELL|HP|FUJITSU|SEAGATE|DVD|enclosu' | tr -s ' ' | head -1 | awk -F ' ' '{print NF; exit}'`
+
 # Gather data from each drive
-for drive in `lsscsi | grep -Ev 'PERC|Dell|DELL|HP|FUJITSU|SEAGATE|DVD|enclosu' | grep ATA | tr -s ' ' | cut -f 7 -d ' '` ; do
+for drive in `lsscsi | grep -Ev 'PERC|Dell|DELL|HP|FUJITSU|SEAGATE|DVD|enclosu' | tr -s ' ' | cut -f $field_ct -d ' '` ; do
     # Member of md array
     if mdadm --examine $drive > /dev/null 2>&1; then
         { echo $drive | tr '\n' ' ';
