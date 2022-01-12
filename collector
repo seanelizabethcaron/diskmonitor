@@ -18,10 +18,10 @@ outfile=$1
 
 # Get the number of output fields in lsscsi output on this system (it can vary)
 # We will use this later to filter out the device names from lsscsi output (always the last field in a line)
-field_ct=`/usr/bin/lsscsi | /bin/grep -Ev 'PERC|Dell|DELL|HP|FUJITSU|SEAGATE|TOSHIBA|WD6001BKHG|WD3001BKHG|HUC106060|DVD|enclosu' | /usr/bin/tr -s ' ' | /usr/bin/head -1 | /usr/bin/awk -F ' ' '{print NF; exit}'`
+field_ct=`/usr/bin/lsscsi | /bin/grep /dev/ | /bin/grep -Ev 'PERC|Dell|DELL|HP|DVD|enclosu' | /usr/bin/tr -s ' ' | /usr/bin/head -1 | /usr/bin/awk -F ' ' '{print NF; exit}'`
 
 # Gather data from each drive
-for drive in `/usr/bin/lsscsi | /bin/grep -Ev 'PERC|Dell|DELL|HP|FUJITSU|SEAGATE|TOSHIBA|WD6001BKHG|WD3001BKHG|HUC106060|DVD|enclosu' | /usr/bin/tr -s ' ' | /usr/bin/cut -f $field_ct -d ' '` ; do
+for drive in `/usr/bin/lsscsi | /bin/grep /dev/ | /bin/grep -Ev 'PERC|Dell|DELL|HP|DVD|enclosu' | /usr/bin/tr -s ' ' | /usr/bin/cut -f $field_ct -d ' '` ; do
     # Member of md array
     if /sbin/mdadm --examine $drive > /dev/null 2>&1; then
         { echo $drive | /usr/bin/tr '\n' ' ';
