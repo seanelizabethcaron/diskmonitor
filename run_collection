@@ -1,7 +1,7 @@
 #!/bin/bash
 
 INSTALL_DIR=/opt/csg
-OUTPUT_FILE=`tempfile -p diskmonitor`
+OUTPUT_FILE=`/bin/tempfile -p diskm`
 PORT=5966
 
 # Check command line arguments
