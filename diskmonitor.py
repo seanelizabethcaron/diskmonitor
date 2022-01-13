@@ -50,13 +50,18 @@ for host in hosts:
     toggle = 0
 
     displayhost = host[0].replace("_", "-")
-
+    
     print('<p><a name=\"' + displayhost + '\">' + displayhost + '</a></p>')
     print('<table>')
     print('<tr><th>device</th><th>memberof_array</th><th>smart_health</th><th>raw_rd_err_rt</th><th>realloc_sec_ct</th><th>realloc_ev_ct</th><th>current_pending_ct</th><th>offline_uncorr_ct</th><th>udma_crc_err_ct</th></tr>')
     for row in disks:
-        if 'FAIL' in row[3] or row[5] > 0 or row[6] > 0 or row[7] > 0 or row[8] > 0:
+        if 'FAIL' in row[3]:
             print('<tr bgcolor=#ffcccc><td>')
+        elif row[5] > 0 or row[6] > 0 or row[7] > 0 or row[8] > 0:
+            if row[5] > 100 or row[6] > 100 or row[7] > 100 or row[8] > 100:
+                print('<tr bgcolor=#ffcccc><td>')
+            else:
+                print('<tr bgcolor=#ffffcc><td>')
         else:
             if toggle == 0:
                 print('<tr bgcolor=#ccffcc><td>')
