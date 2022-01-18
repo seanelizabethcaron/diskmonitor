@@ -24,7 +24,7 @@ field_ct=`/usr/bin/lsscsi | /bin/grep /dev/ | /bin/grep -Ev 'PERC|Dell|DELL|HP|D
 for drive in `/usr/bin/lsscsi | /bin/grep /dev/ | /bin/grep -Ev 'PERC|Dell|DELL|HP|DVD|enclosu' | /usr/bin/tr -s ' ' | /usr/bin/cut -f $field_ct -d ' '` ; do
     # Catch the special case of a machine using partitions instead of whole disks for RAID members
     if /sbin/fdisk -l $drive | grep raid > /dev/null 2>&1; then
-        device=`fdisk -l $drive | grep raid | tr -s ' ' | cut -d ' ' -f 1 | cut -d '/' -f 3`
+        device=`fdisk -l $drive | grep raid | tr -s ' ' | cut -d ' ' -f 1`
     else
         device=$drive
     fi
