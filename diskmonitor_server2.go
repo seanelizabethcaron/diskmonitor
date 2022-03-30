@@ -91,10 +91,10 @@ func main() {
 //  CREATE TABLE hosts (host varchar(32), hostid integer NOT NULL AUTO_INCREMENT PRIMARY KEY);
 //
 // Per-host tables are created dynamically with the following schema:
-//  CREATE TABLE [host]_sata (sampletime bigint, device varchar(16), dev_type varchar(16), serial varchar(16), memberof_array varchar(16), smart_health varchar(16),
+//  CREATE TABLE [host]_sata (sampletime bigint, device varchar(16), device_type varchar(16), serial varchar(16), memberof_array varchar(16), smart_health varchar(16),
 //    raw_rd_err_rt integer, realloc_sec_ct integer, realloc_ev_ct integer, current_pending_ct integer, offline_uncorr_ct integer, udma_crc_err_ct integer);
 //
-//  CREATE TABLE [host]_sas (sampletime bigint, device varchar(16), dev_type varchar(16), serial varchar(16), memberof_array varchar(16), smart_health varchar(16),
+//  CREATE TABLE [host]_sas (sampletime bigint, device varchar(16), device_type varchar(16), serial varchar(16), memberof_array varchar(16), smart_health varchar(16),
 //    rd_tot_corr integer, rd_tot_uncorr integer, wr_tot_corr integer, wr_tot_uncorr integer, vr_tot_corr integer, vr_tot_uncorr integer);
 //
 
@@ -137,7 +137,7 @@ func handle_connection(c net.Conn) {
         host = strings.ReplaceAll(host, "-", "_")
       
         device := data[1]
-        dev_type := data[2]
+        device_type := data[2]
         serial := data[3]
         memberof_array := data[4]
         smart_health := data[5]
@@ -187,7 +187,7 @@ func handle_connection(c net.Conn) {
             //
           
             if (phdt_cti == 0) {
-                dbCmd := "CREATE TABLE " + host + "_sata (sampletime bigint, device varchar(16), dev_type varchar(16), serial varchar(16), memberof_array varchar(16), smart_health varchar(16), raw_rd_err_rt integer, realloc_sec_ct integer, realloc_ev_ct integer, current_pending_ct integer, offline_uncorr_ct integer, udma_crc_err_ct integer);"
+                dbCmd := "CREATE TABLE " + host + "_sata (sampletime bigint, device varchar(16), device_type varchar(16), serial varchar(16), memberof_array varchar(16), smart_health varchar(16), raw_rd_err_rt integer, realloc_sec_ct integer, realloc_ev_ct integer, current_pending_ct integer, offline_uncorr_ct integer, udma_crc_err_ct integer);"
                 _, dbExecErr = dbconn.Exec(dbCmd)
                 if dbExecErr != nil {
                     log.Fatalf("Failed executing CREATE TABLE for host " + host)
@@ -216,7 +216,7 @@ func handle_connection(c net.Conn) {
             //
           
             if (phdt_cti == 0) {
-                dbCmd := "CREATE TABLE " + host + "_sas (sampletime bigint, device varchar(16), dev_type varchar(16), serial varchar(16), memberof_array varchar(16), smart_health varchar(16), rd_tot_corr integer, rd_tot_uncorr integer, wr_tot_corr integer, wr_tot_uncorr integer, vr_tot_corr integer, vr_tot_uncorr integer);"
+                dbCmd := "CREATE TABLE " + host + "_sas (sampletime bigint, device varchar(16), device_type varchar(16), serial varchar(16), memberof_array varchar(16), smart_health varchar(16), rd_tot_corr integer, rd_tot_uncorr integer, wr_tot_corr integer, wr_tot_uncorr integer, vr_tot_corr integer, vr_tot_uncorr integer);"
                 _, dbExecErr = dbconn.Exec(dbCmd)
                 if dbExecErr != nil {
                     log.Fatalf("Failed executing CREATE TABLE for host " + host)
@@ -236,27 +236,13 @@ func handle_connection(c net.Conn) {
         //
 
         if (dev_type == "SATA") {
-            raw_rd_err_rt := data[6]
-            realloc_sec_ct := data[7]
-            realloc_ev_ct := data[8]
-            current_pending_ct := data[9]
-            offline_uncorr_ct := data[10]
-            udma_crc_err_ct := data[11]
-            
-            dbCmd := "INSERT INTO " + host + "_sata VALUES (" + tt + ",'" + device + "','" + dev_type + "','" + serial + "','" + memberof_array + "','" + smart_health + "'," + raw_rd_err_rt + "," + realloc_sec_ct + "," + realloc_ev_ct + "," + current_pending_ct + "," + offline_uncorr_ct + "," + udma_crc_err_ct + ");"
+            dbCmd := "INSERT INTO " + host + "_sata VALUES (" + tt + ",'" + device + "','" + device_type + "','" + serial + "','" + memberof_array + "','" + smart_health + "'," + data[6] + "," + data[7] + "," + data[8] + "," + data[9] + "," + data[10] + "," + data[11] + ");"
             _, dbExecErr := dbconn.Exec(dbCmd)
             if dbExecErr != nil {
                 log.Fatalf("Failed executing per-host disk table INSERT for host " + host)
             }
-        } else {
-            rd_tot_corr := data[6]
-            rd_tot_uncorr := data[7]
-            wr_tot_corr := data[8]
-            wr_tot_uncorr := data[9]
-            vr_tot_corr := data[10]
-            vr_tot_uncorr := data[11]
-            
-            dbCmd := "INSERT INTO " + host + "_sas VALUES (" + tt + ",'" + device + "','" + dev_type + "','" + serial + "','" + memberof_array + "','" + smart_health + "'," + rd_tot_corr + "," + rd_tot_uncorr + "," + wr_tot_corr + "," + wr_tot_uncorr + "," + vr_tot_corr + "," + vr_tot_uncorr + ");"
+        } else {            
+            dbCmd := "INSERT INTO " + host + "_sas VALUES (" + tt + ",'" + device + "','" + device_type + "','" + serial + "','" + memberof_array + "','" + smart_health + "'," + data[6] + "," + data[7] + "," + data[8] + "," + data[9] + "," + data[10] + "," + data[11] + ");"
             _, dbExecErr := dbconn.Exec(dbCmd)
             if dbExecErr != nil {
                 log.Fatalf("Failed executing per-host disk table INSERT for host " + host)
