@@ -46,7 +46,7 @@ chmod +x install.sh
 ./install.sh
 ```
 
-For server:
+##### Server
 
 Edit configuration files to reflect the parameters that you used to set up the backing database.
 
@@ -57,7 +57,7 @@ Edit /etc/rc.local to start the collector service:
 /opt/csg/bin/diskmonitor_server -f /opt/csg/etc/diskmonitor_server.conf > /dev/null 2>&1 &
 ```
 
-For client:
+##### Client
 
 Edit /opt/csg/bin/run_collection to set INSTALL_DIR.
 
