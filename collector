@@ -32,7 +32,7 @@ for line in `/usr/bin/lsscsi | /bin/grep /dev/ | /bin/grep -Ev 'PERC|Dell|DELL|H
     fi
 
     # Member of md array
-    if /sbin/mdadm --examine $device > /dev/null 2>&1; then
+    if /sbin/mdadm --examine $device | /bin/grep Name > /dev/null 2>&1; then
         { echo $device | /usr/bin/tr '\n' ' ';
         /sbin/mdadm --examine $device | /bin/grep Name | /usr/bin/awk '{$1=$1};1' | /usr/bin/cut -d ' ' -f 3 | /usr/bin/cut -d ':' -f 2 | /bin/sed -e 's/^/\/dev\/md/' | /usr/bin/tr '\n' ' ';
         /usr/sbin/smartctl -H $device | /bin/grep overall-health | /usr/bin/cut -d ' ' -f 6 | /usr/bin/tr '\n' ' ';
