@@ -22,7 +22,7 @@ Disk Monitor offers a centralized system for monitoring the health of many disk 
 machines, permitting potential failures to be manually identified by system administrators that may
 otherwise be missed by smartd or the standard md RAID disk failure process.
 
-Database setup:
+#### Database Setup
 
 ```
 CREATE DATABASE diskmonitor;
@@ -37,7 +37,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, REFERENCES, INDEX, ALTER, CR
   ON diskmonitor.* to 'diskmon'@'%';
 ```
 
-Installation:
+#### Installation
 
 ```
 git clone http://github.com/seantcaron/diskmonitor
@@ -67,6 +67,8 @@ Edit crontab for root on each client to add a line such as:
 # Run Disk Monitor collection agent
 0 0 * * * /opt/csg/bin/run_collection csgadmin.csgstat.sph.umich.edu > /dev/null 2>&1
 ```
+
+#### Schema
 
 Schema for host table:
 
