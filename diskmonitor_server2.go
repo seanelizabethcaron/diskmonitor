@@ -141,23 +141,7 @@ func handle_connection(c net.Conn) {
         serial := data[3]
         memberof_array := data[4]
         smart_health := data[5]
-      
-        if (dev_type == "SATA") {
-            raw_rd_err_rt := data[6]
-            realloc_sec_ct := data[7]
-            realloc_ev_ct := data[8]
-            current_pending_ct := data[9]
-            offline_uncorr_ct := data[10]
-            udma_crc_err_ct := data[11]
-        } else {
-            rd_tot_corr := data[6]
-            rd_tot_uncorr := data[7]
-            wr_tot_corr := data[8]
-            wr_tot_uncorr := data[9]
-            vr_tot_corr := data[10]
-            vr_tot_uncorr := data[11]
-        }
-      
+            
         if (runPerHostTasks) {
             //
             // Check to see if the host exists in the host tracking table
@@ -252,12 +236,26 @@ func handle_connection(c net.Conn) {
         //
 
         if (dev_type == "SATA") {
-          dbCmd := "INSERT INTO " + host + "_sata VALUES (" + tt + ",'" + device + "','" + dev_type + "','" + serial + "','" + memberof_array + "','" + smart_health + "'," + raw_rd_err_rt + "," + realloc_sec_ct + "," + realloc_ev_ct + "," + current_pending_ct + "," + offline_uncorr_ct + "," + udma_crc_err_ct + ");"
+            raw_rd_err_rt := data[6]
+            realloc_sec_ct := data[7]
+            realloc_ev_ct := data[8]
+            current_pending_ct := data[9]
+            offline_uncorr_ct := data[10]
+            udma_crc_err_ct := data[11]
+            
+            dbCmd := "INSERT INTO " + host + "_sata VALUES (" + tt + ",'" + device + "','" + dev_type + "','" + serial + "','" + memberof_array + "','" + smart_health + "'," + raw_rd_err_rt + "," + realloc_sec_ct + "," + realloc_ev_ct + "," + current_pending_ct + "," + offline_uncorr_ct + "," + udma_crc_err_ct + ");"
             _, dbExecErr := dbconn.Exec(dbCmd)
             if dbExecErr != nil {
                 log.Fatalf("Failed executing per-host disk table INSERT for host " + host)
             }
         } else {
+            rd_tot_corr := data[6]
+            rd_tot_uncorr := data[7]
+            wr_tot_corr := data[8]
+            wr_tot_uncorr := data[9]
+            vr_tot_corr := data[10]
+            vr_tot_uncorr := data[11]
+            
             dbCmd := "INSERT INTO " + host + "_sas VALUES (" + tt + ",'" + device + "','" + dev_type + "','" + serial + "','" + memberof_array + "','" + smart_health + "'," + rd_tot_corr + "," + rd_tot_uncorr + "," + wr_tot_corr + "," + wr_tot_uncorr + "," + vr_tot_corr + "," + vr_tot_uncorr + ");"
             _, dbExecErr := dbconn.Exec(dbCmd)
             if dbExecErr != nil {
