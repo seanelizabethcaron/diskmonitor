@@ -77,7 +77,9 @@ CREATE TABLE hosts (host varchar(32), hostid integer NOT NULL AUTO_INCREMENT PRI
 Schema for per-host disk data tables:
 
 ```
-CREATE TABLE [host] (sampletime bigint, device varchar(16), memberof_array varchar(16), smart_health varchar(16),
-  raw_rd_err_rt integer, realloc_sec_ct integer, realloc_ev_ct integer, current_pending_ct integer,
-  offline_uncorr_ct integer, udma_crc_err_ct integer);
+CREATE TABLE [host]_sata (sampletime bigint, device varchar(16), device_type varchar(16), serial varchar(16), memberof_array varchar(16), smart_health varchar(16),
+  raw_rd_err_rt integer, realloc_sec_ct integer, realloc_ev_ct integer, current_pending_ct integer, offline_uncorr_ct integer, udma_crc_err_ct integer);
+
+CREATE TABLE [host]_sas (sampletime bigint, device varchar(16), device_type varchar(16), serial varchar(16), memberof_array varchar(16), smart_health varchar(16),
+  rd_tot_corr integer, rd_tot_uncorr integer, wr_tot_corr integer, wr_tot_uncorr integer, vr_tot_corr integer, vr_tot_uncorr integer);
 ```
