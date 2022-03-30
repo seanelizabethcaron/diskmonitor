@@ -16,19 +16,21 @@ fi
 
 outfile=$1
 
-# Get the number of output fields in lsscsi output on this system (it can vary)
-# We will use this later to filter out the device names from lsscsi output (always the last field in a line)
-field_ct=`/usr/bin/lsscsi | /bin/grep /dev/ | /bin/grep -Ev 'PERC|Dell|DELL|HP|DVD|enclosu' | /usr/bin/tr -s ' ' | /usr/bin/head -1 | /usr/bin/awk -F ' ' '{print NF; exit}'`
-
 # Gather data from each drive
-for drive in `/usr/bin/lsscsi | /bin/grep /dev/ | /bin/grep -Ev 'PERC|Dell|DELL|HP|DVD|enclosu' | /usr/bin/tr -s ' ' | /usr/bin/cut -f $field_ct -d ' '` ; do
+IFS=$'\n'
+
+for line in `/usr/bin/lsscsi | /bin/grep /dev/ | /bin/grep -Ev 'PERC|Dell|DELL|HP|DVD|enclosu'`; do
+    # Number of fields can vary so be sure to always grab the last possible field (device name)
+    field_ct=`echo $line | /usr/bin/tr -s ' ' | /usr/bin/awk -F ' ' '{print NF; exit}'`
+    drive=`echo $line | /usr/bin/tr -s ' ' | /usr/bin/cut -f $field_ct -d ' '`
+
     # Catch the special case of a machine using partitions instead of whole disks for RAID members
     if /sbin/fdisk -l $drive | grep raid > /dev/null 2>&1; then
         device=`/sbin/fdisk -l $drive | grep raid | tr -s ' ' | cut -d ' ' -f 1`
     else
         device=$drive
     fi
-    
+
     # Member of md array
     if /sbin/mdadm --examine $device > /dev/null 2>&1; then
         { echo $device | /usr/bin/tr '\n' ' ';
