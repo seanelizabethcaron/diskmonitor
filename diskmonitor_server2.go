@@ -223,9 +223,8 @@ func handle_connection(c net.Conn) {
                 log.Fatalf("Failed executing SELECT FROM information_schema for host " + host)
             }
 
-            var phdt_ct string
             _ = dbconn.QueryRow(dbCmd).Scan(&phdt_ct)
-            phdt_cti, _ := strconv.Atoi(phdt_ct)
+            phdt_cti, _ = strconv.Atoi(phdt_ct)
 
             //
             // If not, create a per-host disk data table for the host
