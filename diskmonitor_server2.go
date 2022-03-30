@@ -235,7 +235,7 @@ func handle_connection(c net.Conn) {
         // Add this line of disk data entries to the requisite per-host disk data table
         //
 
-        if (dev_type == "SATA") {
+        if (device_type == "SATA") {
             dbCmd := "INSERT INTO " + host + "_sata VALUES (" + tt + ",'" + device + "','" + device_type + "','" + serial + "','" + memberof_array + "','" + smart_health + "'," + data[6] + "," + data[7] + "," + data[8] + "," + data[9] + "," + data[10] + "," + data[11] + ");"
             _, dbExecErr := dbconn.Exec(dbCmd)
             if dbExecErr != nil {
