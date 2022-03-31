@@ -68,7 +68,7 @@ for host in hosts:
         print('<table>')
         print('<tr><th>device</th><th>type</th><th>serial</th><th>memberof_array</th><th>smart_health</th><th>raw_rd_err_rt</th><th>realloc_sec</th><th>realloc_ev</th><th>curr_pend</th><th>offline_uncorr</th><th>udma_crc_err</th></tr>')
         for row in disks:
-            if 'FAIL' in row[3]:
+            if 'FAIL' in row[5]:
                 print('<tr bgcolor=#ffcccc><td>')
                 red_disks = red_disks + 1
             elif row[7] > 0 or row[8] > 0 or row[9] > 0 or row[10] > 0:
@@ -129,11 +129,11 @@ for host in hosts:
         print('<table>')
         print('<tr><th>device</th><th>type</th><th>serial</th><th>memberof_array</th><th>smart_health</th><th>rd_tot_corr</th><th>rd_tot_uncorr</th><th>wr_tot_corr</th><th>wr_tot_uncorr</th><th>vr_tot_corr</th><th>vr_tot_uncorr</th></tr>')
         for row in disks:
-            if 'FAIL' in row[3]:
+            if 'FAIL' in row[5]:
                 print('<tr bgcolor=#ffcccc><td>')
                 red_disks = red_disks + 1
-            elif row[7] > 0 or row[8] > 0 or row[9] > 0 or row[10] > 0:
-                if row[7] > 100 or row[8] > 100 or row[9] > 100 or row[10] > 100:
+            elif row[7] > 0 or row[9] > 0 or row[11] > 0:
+                if row[7] > 100 or row[9] > 100 or row[11] > 100:
                     print('<tr bgcolor=#ffcccc><td>')
                     red_disks = red_disks + 1
                 else:
