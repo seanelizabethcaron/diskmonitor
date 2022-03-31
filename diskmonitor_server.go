@@ -91,8 +91,11 @@ func main() {
 //  CREATE TABLE hosts (host varchar(32), hostid integer NOT NULL AUTO_INCREMENT PRIMARY KEY);
 //
 // Per-host tables are created dynamically with the following schema:
-//  CREATE TABLE [host] (device varchar(16), memberof_array varchar(16), smart_health varchar(16), raw_rd_err_rt integer, realloc_sec_ct integer,
-//    realloc_ev_ct integer, current_pending_ct integer, offline_uncorr_ct integer, udma_crc_err_ct integer);
+//  CREATE TABLE [host]_sata (sampletime bigint, device varchar(16), device_type varchar(16), serial varchar(16), memberof_array varchar(16), smart_health varchar(16),
+//    raw_rd_err_rt integer, realloc_sec_ct integer, realloc_ev_ct integer, current_pending_ct integer, offline_uncorr_ct integer, udma_crc_err_ct integer);
+//
+//  CREATE TABLE [host]_sas (sampletime bigint, device varchar(16), device_type varchar(16), serial varchar(16), memberof_array varchar(16), smart_health varchar(16),
+//    rd_tot_corr integer, rd_tot_uncorr integer, wr_tot_corr integer, wr_tot_uncorr integer, vr_tot_corr integer, vr_tot_uncorr integer);
 //
 
 func handle_connection(c net.Conn) {
@@ -125,24 +128,21 @@ func handle_connection(c net.Conn) {
         data := strings.Fields(inp)
 
         // Skip malformed input lines
-        if (len(data) != 10) {
+        if (len(data) != 12) {
+            log.Print("Received malformed input line %s\n", inp)
             continue
         }
         
         host := data[0]
         // MySQL will not accept table names with hyphens so convert hyphens in host names to underscore
         host = strings.ReplaceAll(host, "-", "_")
-        
+      
         device := data[1]
-        memberof_array := data[2]
-        smart_health := data[3]
-        raw_rd_err_rt := data[4]
-        realloc_sec_ct := data[5]
-        realloc_ev_ct := data[6]
-        current_pending_ct := data[7]
-        offline_uncorr_ct := data[8]
-        udma_crc_err_ct := data[9]
-
+        device_type := data[2]
+        serial := data[3]
+        memberof_array := data[4]
+        smart_health := data[5]
+            
         if (runPerHostTasks) {
             //
             // Check to see if the host exists in the host tracking table
@@ -170,9 +170,9 @@ func handle_connection(c net.Conn) {
                 }
             }
 
-            // Check to see if a per-host disk data table exists for this host
+            // Check to see if a per-host SATA disk data table exists for this host
 
-            dbCmd = "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '" + dbName + "' AND table_name = '" + host + "';"
+            dbCmd = "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '" + dbName + "' AND table_name = '" + host + "_sata';"
             _, dbExecErr = dbconn.Exec(dbCmd)
             if dbExecErr != nil {
                 log.Fatalf("Failed executing SELECT FROM information_schema for host " + host)
@@ -183,38 +183,74 @@ func handle_connection(c net.Conn) {
             phdt_cti, _ := strconv.Atoi(phdt_ct)
 
             //
-            // If not, create a per-host disk data table for the host
+            // If not, create a per-host SATA disk data table for the host
             // If so, clear out any old entries in the per-host disk data table
             //
-
+          
             if (phdt_cti == 0) {
-                dbCmd := "CREATE TABLE " + host + " (sampletime bigint, device varchar(16), memberof_array varchar(16), smart_health varchar(16), raw_rd_err_rt integer, realloc_sec_ct integer, realloc_ev_ct integer, current_pending_ct integer, offline_uncorr_ct integer, udma_crc_err_ct integer);"
+                dbCmd := "CREATE TABLE " + host + "_sata (sampletime bigint, device varchar(16), device_type varchar(16), serial varchar(16), memberof_array varchar(16), smart_health varchar(16), raw_rd_err_rt integer, realloc_sec_ct integer, realloc_ev_ct integer, current_pending_ct integer, offline_uncorr_ct integer, udma_crc_err_ct integer);"
                 _, dbExecErr = dbconn.Exec(dbCmd)
                 if dbExecErr != nil {
                     log.Fatalf("Failed executing CREATE TABLE for host " + host)
                 }
             } else {
-                dbCmd := "TRUNCATE TABLE " + host + ";"
+                dbCmd := "TRUNCATE TABLE " + host + "_sata;"
                 _, dbExecErr = dbconn.Exec(dbCmd)
                 if dbExecErr != nil {
                     log.Fatalf("Failed executing TRUNCATE for host " + host)
                 }
             }
             
+            // Check to see if a per-host SAS disk data table exists for this host
+            dbCmd = "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '" + dbName + "' AND table_name = '" + host + "_sas';"
+            _, dbExecErr = dbconn.Exec(dbCmd)
+            if dbExecErr != nil {
+                log.Fatalf("Failed executing SELECT FROM information_schema for host " + host)
+            }
+
+            _ = dbconn.QueryRow(dbCmd).Scan(&phdt_ct)
+            phdt_cti, _ = strconv.Atoi(phdt_ct)
+
+            //
+            // If not, create a per-host disk data table for the host
+            // If so, clear out any old entries in the per-host disk data table
+            //
+          
+            if (phdt_cti == 0) {
+                dbCmd := "CREATE TABLE " + host + "_sas (sampletime bigint, device varchar(16), device_type varchar(16), serial varchar(16), memberof_array varchar(16), smart_health varchar(16), rd_tot_corr integer, rd_tot_uncorr integer, wr_tot_corr integer, wr_tot_uncorr integer, vr_tot_corr integer, vr_tot_uncorr integer);"
+                _, dbExecErr = dbconn.Exec(dbCmd)
+                if dbExecErr != nil {
+                    log.Fatalf("Failed executing CREATE TABLE for host " + host)
+                }
+            } else {
+                dbCmd := "TRUNCATE TABLE " + host + "_sas;"
+                _, dbExecErr = dbconn.Exec(dbCmd)
+                if dbExecErr != nil {
+                    log.Fatalf("Failed executing TRUNCATE for host " + host)
+                }
+            }
             runPerHostTasks = false
         }
         
         //
-        // Add this line of disk data entries to the per-host disk data table
+        // Add this line of disk data entries to the requisite per-host disk data table
         //
 
-        dbCmd := "INSERT INTO " + host + " VALUES (" + tt + ",'" + device + "','" + memberof_array + "','" + smart_health + "'," + raw_rd_err_rt + "," + realloc_sec_ct + "," + realloc_ev_ct + "," + current_pending_ct + "," + offline_uncorr_ct + "," + udma_crc_err_ct + ");"
-        _, dbExecErr := dbconn.Exec(dbCmd)
-        if dbExecErr != nil {
-            log.Fatalf("Failed executing per-host disk table INSERT for host " + host)
+        if (device_type == "SATA") {
+            dbCmd := "INSERT INTO " + host + "_sata VALUES (" + tt + ",'" + device + "','" + device_type + "','" + serial + "','" + memberof_array + "','" + smart_health + "'," + data[6] + "," + data[7] + "," + data[8] + "," + data[9] + "," + data[10] + "," + data[11] + ");"
+            _, dbExecErr := dbconn.Exec(dbCmd)
+            if dbExecErr != nil {
+                log.Fatalf("Failed executing per-host SATA disk table INSERT for host " + host)
+            }
+        } else {            
+            dbCmd := "INSERT INTO " + host + "_sas VALUES (" + tt + ",'" + device + "','" + device_type + "','" + serial + "','" + memberof_array + "','" + smart_health + "'," + data[6] + "," + data[7] + "," + data[8] + "," + data[9] + "," + data[10] + "," + data[11] + ");"
+            _, dbExecErr := dbconn.Exec(dbCmd)
+            if dbExecErr != nil {
+                log.Fatalf("Failed executing per-host SAS disk table INSERT for host " + host)
+            } 
         }
     }
-
+  
     dbconn.Close()
     
     c.Close()
