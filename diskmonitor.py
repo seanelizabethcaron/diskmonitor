@@ -104,7 +104,7 @@ for host in hosts:
             print('</td><td>')
             print(row[10])
             print('</td><td>')
-           print('</td><td>')
+            print('</td><td>')
             print(row[11])
             print('</td></tr>')
 
