@@ -31,7 +31,7 @@ for line in `/usr/bin/lsscsi | /bin/grep /dev/ | /bin/grep -Ev 'PERC|Dell|DELL|H
 
     # Catch the special case of a machine using partitions instead of whole disks for RAID members
     if /sbin/fdisk -l $drive | /bin/grep raid > /dev/null 2>&1; then
-        device=`/sbin/fdisk -l $drive | /bin/grep raid | tr -s ' ' | cut -d ' ' -f 1`
+        device=`/sbin/fdisk -l $drive | /bin/grep raid | /usr/bin/tr -s ' ' | /usr/bin/cut -d ' ' -f 1`
     else
         device=$drive
     fi
