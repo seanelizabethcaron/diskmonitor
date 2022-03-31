@@ -48,9 +48,9 @@ chmod +x install.sh
 
 ##### Server
 
-Edit configuration files to reflect the parameters that you used to set up the backing database.
+1. Edit configuration files to reflect the parameters that you used to set up the backing database.
 
-Edit /etc/rc.local to start the collector service:
+2. Edit /etc/rc.local to start the collector service:
 
 ```
 # Start up Disk Monitor server
@@ -59,9 +59,9 @@ Edit /etc/rc.local to start the collector service:
 
 ##### Client
 
-Edit /opt/csg/bin/run_collection to set INSTALL_DIR.
+1. Edit /opt/csg/bin/run_collection to set INSTALL_DIR.
 
-Edit crontab for root on each client to add a line such as:
+2. Edit crontab for root on each client to add a line such as:
 
 ```
 # Run Disk Monitor collection agent
