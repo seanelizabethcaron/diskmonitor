@@ -5,7 +5,7 @@ Sean Caron (scaron@umich.edu)
 Detailed multi-host monitoring of large JBOD arrays
 
 Disk Monitor centralizes the gathering of SMART health data across a cluster of machines with JBOD
-disk arrays composed of Enterprise SATA drives.
+disk arrays composed of Enterprise SATA and SAS drives.
 
 On the client, a UNIX shell script gathers SMART health data from each disk and prepares a properly
 formatted output file aggregating the health data. A lightweight agent written in Go sends the disk
