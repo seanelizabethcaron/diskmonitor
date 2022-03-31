@@ -46,7 +46,7 @@ chmod +x install.sh
 ./install.sh
 ```
 
-##### Server
+##### Server post-install configuration
 
 1. Edit configuration files to reflect the parameters that you used to set up the backing database.
 
@@ -57,7 +57,7 @@ chmod +x install.sh
 /opt/csg/bin/diskmonitor_server -f /opt/csg/etc/diskmonitor_server.conf > /dev/null 2>&1 &
 ```
 
-##### Client
+##### Client post-install configuration
 
 1. Edit /opt/csg/bin/run_collection to set INSTALL_DIR.
 
