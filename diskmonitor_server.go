@@ -129,7 +129,7 @@ func handle_connection(c net.Conn) {
 
         // Skip malformed input lines
         if (len(data) != 12) {
-            log.Print("Received malformed input line %s\n", inp)
+            log.Printf("Received malformed input line: %s\n", inp)
             continue
         }
         
