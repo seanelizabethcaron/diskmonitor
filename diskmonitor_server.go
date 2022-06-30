@@ -92,10 +92,10 @@ func main() {
 //
 // Per-host tables are created dynamically with the following schema:
 //  CREATE TABLE [host]_sata (sampletime bigint, device varchar(16), device_type varchar(16), serial varchar(16), memberof_array varchar(16), smart_health varchar(16),
-//    raw_rd_err_rt integer, realloc_sec_ct integer, realloc_ev_ct integer, current_pending_ct integer, offline_uncorr_ct integer, udma_crc_err_ct integer);
+//    raw_rd_err_rt bigint, realloc_sec_ct bigint, realloc_ev_ct bigint, current_pending_ct bigint, offline_uncorr_ct bigint, udma_crc_err_ct bigint);
 //
 //  CREATE TABLE [host]_sas (sampletime bigint, device varchar(16), device_type varchar(16), serial varchar(16), memberof_array varchar(16), smart_health varchar(16),
-//    rd_tot_corr integer, rd_tot_uncorr integer, wr_tot_corr integer, wr_tot_uncorr integer, vr_tot_corr integer, vr_tot_uncorr integer);
+//    rd_tot_corr bigint, rd_tot_uncorr bigint, wr_tot_corr bigint, wr_tot_uncorr bigint, vr_tot_corr bigint, vr_tot_uncorr bigint);
 //
 
 func handle_connection(c net.Conn) {
@@ -188,7 +188,7 @@ func handle_connection(c net.Conn) {
             //
           
             if (phdt_cti == 0) {
-                dbCmd := "CREATE TABLE " + host + "_sata (sampletime bigint, device varchar(16), device_type varchar(16), serial varchar(16), memberof_array varchar(16), smart_health varchar(16), raw_rd_err_rt integer, realloc_sec_ct integer, realloc_ev_ct integer, current_pending_ct integer, offline_uncorr_ct integer, udma_crc_err_ct integer);"
+                dbCmd := "CREATE TABLE " + host + "_sata (sampletime bigint, device varchar(16), device_type varchar(16), serial varchar(16), memberof_array varchar(16), smart_health varchar(16), raw_rd_err_rt bigint, realloc_sec_ct bigint, realloc_ev_ct bigint, current_pending_ct bigint, offline_uncorr_ct bigint, udma_crc_err_ct bigint);"
                 _, dbExecErr = dbconn.Exec(dbCmd)
                 if dbExecErr != nil {
                     log.Fatalf("Failed executing per-host SATA disk table CREATE TABLE for host " + host)
@@ -217,7 +217,7 @@ func handle_connection(c net.Conn) {
             //
           
             if (phdt_cti == 0) {
-                dbCmd := "CREATE TABLE " + host + "_sas (sampletime bigint, device varchar(16), device_type varchar(16), serial varchar(16), memberof_array varchar(16), smart_health varchar(16), rd_tot_corr integer, rd_tot_uncorr integer, wr_tot_corr integer, wr_tot_uncorr integer, vr_tot_corr integer, vr_tot_uncorr integer);"
+                dbCmd := "CREATE TABLE " + host + "_sas (sampletime bigint, device varchar(16), device_type varchar(16), serial varchar(16), memberof_array varchar(16), smart_health varchar(16), rd_tot_corr bigint, rd_tot_uncorr bigint, wr_tot_corr bigint, wr_tot_uncorr bigint, vr_tot_corr bigint, vr_tot_uncorr bigint);"
                 _, dbExecErr = dbconn.Exec(dbCmd)
                 if dbExecErr != nil {
                     log.Fatalf("Failed executing per-host SAS disk table CREATE TABLE for host " + host)
