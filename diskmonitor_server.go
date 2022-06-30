@@ -191,13 +191,13 @@ func handle_connection(c net.Conn) {
                 dbCmd := "CREATE TABLE " + host + "_sata (sampletime bigint, device varchar(16), device_type varchar(16), serial varchar(16), memberof_array varchar(16), smart_health varchar(16), raw_rd_err_rt integer, realloc_sec_ct integer, realloc_ev_ct integer, current_pending_ct integer, offline_uncorr_ct integer, udma_crc_err_ct integer);"
                 _, dbExecErr = dbconn.Exec(dbCmd)
                 if dbExecErr != nil {
-                    log.Fatalf("Failed executing CREATE TABLE for host " + host)
+                    log.Fatalf("Failed executing per-host SATA disk table CREATE TABLE for host " + host)
                 }
             } else {
                 dbCmd := "TRUNCATE TABLE " + host + "_sata;"
                 _, dbExecErr = dbconn.Exec(dbCmd)
                 if dbExecErr != nil {
-                    log.Fatalf("Failed executing TRUNCATE for host " + host)
+                    log.Fatalf("Failed executing per-host SATA disk table TRUNCATE for host " + host)
                 }
             }
             
@@ -220,13 +220,13 @@ func handle_connection(c net.Conn) {
                 dbCmd := "CREATE TABLE " + host + "_sas (sampletime bigint, device varchar(16), device_type varchar(16), serial varchar(16), memberof_array varchar(16), smart_health varchar(16), rd_tot_corr integer, rd_tot_uncorr integer, wr_tot_corr integer, wr_tot_uncorr integer, vr_tot_corr integer, vr_tot_uncorr integer);"
                 _, dbExecErr = dbconn.Exec(dbCmd)
                 if dbExecErr != nil {
-                    log.Fatalf("Failed executing CREATE TABLE for host " + host)
+                    log.Fatalf("Failed executing per-host SAS disk table CREATE TABLE for host " + host)
                 }
             } else {
                 dbCmd := "TRUNCATE TABLE " + host + "_sas;"
                 _, dbExecErr = dbconn.Exec(dbCmd)
                 if dbExecErr != nil {
-                    log.Fatalf("Failed executing TRUNCATE for host " + host)
+                    log.Fatalf("Failed executing per-host SAS disk table TRUNCATE for host " + host)
                 }
             }
             runPerHostTasks = false
@@ -240,13 +240,13 @@ func handle_connection(c net.Conn) {
             dbCmd := "INSERT INTO " + host + "_sata VALUES (" + tt + ",'" + device + "','" + device_type + "','" + serial + "','" + memberof_array + "','" + smart_health + "'," + data[6] + "," + data[7] + "," + data[8] + "," + data[9] + "," + data[10] + "," + data[11] + ");"
             _, dbExecErr := dbconn.Exec(dbCmd)
             if dbExecErr != nil {
-                log.Fatalf("Failed executing per-host SATA disk table INSERT for host " + host)
+                log.Fatalf("Failed executing per-host SATA disk table INSERT for device " + device + " on host " + host " + host)
             }
         } else {            
             dbCmd := "INSERT INTO " + host + "_sas VALUES (" + tt + ",'" + device + "','" + device_type + "','" + serial + "','" + memberof_array + "','" + smart_health + "'," + data[6] + "," + data[7] + "," + data[8] + "," + data[9] + "," + data[10] + "," + data[11] + ");"
             _, dbExecErr := dbconn.Exec(dbCmd)
             if dbExecErr != nil {
-                log.Fatalf("Failed executing per-host SAS disk table INSERT for host " + host)
+                log.Fatalf("Failed executing per-host SAS disk table INSERT for device " + device + " on host " + host " + host)
             } 
         }
     }
