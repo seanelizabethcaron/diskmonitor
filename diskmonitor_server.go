@@ -240,13 +240,13 @@ func handle_connection(c net.Conn) {
             dbCmd := "INSERT INTO " + host + "_sata VALUES (" + tt + ",'" + device + "','" + device_type + "','" + serial + "','" + memberof_array + "','" + smart_health + "'," + data[6] + "," + data[7] + "," + data[8] + "," + data[9] + "," + data[10] + "," + data[11] + ");"
             _, dbExecErr := dbconn.Exec(dbCmd)
             if dbExecErr != nil {
-                log.Fatalf("Failed executing per-host SATA disk table INSERT for device " + device + " on host " + host " + host)
+                log.Fatalf("Failed executing per-host SATA disk table INSERT for device " + device + " on host " + host + host)
             }
         } else {            
             dbCmd := "INSERT INTO " + host + "_sas VALUES (" + tt + ",'" + device + "','" + device_type + "','" + serial + "','" + memberof_array + "','" + smart_health + "'," + data[6] + "," + data[7] + "," + data[8] + "," + data[9] + "," + data[10] + "," + data[11] + ");"
             _, dbExecErr := dbconn.Exec(dbCmd)
             if dbExecErr != nil {
-                log.Fatalf("Failed executing per-host SAS disk table INSERT for device " + device + " on host " + host " + host)
+                log.Fatalf("Failed executing per-host SAS disk table INSERT for device " + device + " on host " + host + host)
             } 
         }
     }
