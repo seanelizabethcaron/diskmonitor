@@ -1,9 +1,13 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 # Pull data from the Disk Monitor database and generate the Web dashboard
 #  Sean Caron (scaron@umich.edu)
 
-import cgi, time, sys, MySQLdb, ConfigParser
+#
+# Requires package: python3-mysqldb
+#
+
+import cgi, time, sys, MySQLdb, configparser
 
 print('Content-type: text/html\n')
 print('<html>')
@@ -15,7 +19,7 @@ print('</head>')
 print('<body bgcolor=White text=Black vlink=Black link=Black>')
 print('<h2>Disk Monitor: ' + time.strftime("%A %b %d %H:%M:%S %Z", time.localtime()) + '</h2>')
 
-cfg = ConfigParser.ConfigParser()
+cfg = configparser.ConfigParser()
 cfg.read('/opt/csg/etc/dashboard.ini')
 
 dbuser = cfg.get('database', 'user')
