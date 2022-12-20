@@ -27,8 +27,11 @@ dbpass = cfg.get('database', 'passwd')
 dbname = cfg.get('database', 'db')
 dbhost = cfg.get('database', 'host')
 
+# Total number of disks
 total_disks = 0
+# Disks in caution (yellow) status
 yellow_disks = 0
+# Disks in danger (red) status
 red_disks = 0
 
 db = MySQLdb.connect(host=dbhost,user=dbuser,passwd=dbpass,db=dbname)
@@ -72,13 +75,17 @@ for host in hosts:
         print('<table>')
         print('<tr><th>device</th><th>type</th><th>serial</th><th>memberof_array</th><th>smart_health</th><th>raw_rd_err_rt</th><th>realloc_sec</th><th>realloc_ev</th><th>curr_pend</th><th>offline_uncorr</th><th>udma_crc_err</th></tr>')
         for row in disks:
+            # If SMART reports the disk as failed then it is definitely a red status disk
             if 'FAIL' in row[5]:
                 print('<tr bgcolor=#ffcccc><td>')
                 red_disks = red_disks + 1
+            # If SMART counters are greater than zero on metrics we are monitoring, the disk is either red or yellow status
             elif row[7] > 0 or row[8] > 0 or row[9] > 0 or row[10] > 0:
+                # If SMART counters are greater than 100, flag the disk as red status
                 if row[7] > 100 or row[8] > 100 or row[9] > 100 or row[10] > 100:
                     print('<tr bgcolor=#ffcccc><td>')
                     red_disks = red_disks + 1
+                # Otherwise flag the disk as yellow status
                 else:
                     print('<tr bgcolor=#ffffcc><td>')
                     yellow_disks = yellow_disks + 1
@@ -133,13 +140,17 @@ for host in hosts:
         print('<table>')
         print('<tr><th>device</th><th>type</th><th>serial</th><th>memberof_array</th><th>smart_health</th><th>rd_tot_corr</th><th>rd_tot_uncorr</th><th>wr_tot_corr</th><th>wr_tot_uncorr</th><th>vr_tot_corr</th><th>vr_tot_uncorr</th></tr>')
         for row in disks:
+            # If SMART reports the disk as failed then it is definitely a red status disk
             if 'FAIL' in row[5]:
                 print('<tr bgcolor=#ffcccc><td>')
                 red_disks = red_disks + 1
+            # If SMART counters are greater than zero on metrics we are monitoring, the disk is either red or yellow status
             elif row[7] > 0 or row[9] > 0 or row[11] > 0:
+                # If SMART counters are greater than 100, flag the disk as red status
                 if row[7] > 100 or row[9] > 100 or row[11] > 100:
                     print('<tr bgcolor=#ffcccc><td>')
                     red_disks = red_disks + 1
+                # Otherwise flag the disk as yellow status
                 else:
                     print('<tr bgcolor=#ffffcc><td>')
                     yellow_disks = yellow_disks + 1
