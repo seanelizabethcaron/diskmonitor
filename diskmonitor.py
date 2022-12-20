@@ -45,7 +45,7 @@ print('<ul>')
 for host in hosts:
     displayhost = host[0].replace("_", "-")
 
-    print('<li><font face="Arial, Helvetia"><a href=\"#' + displayhost + '\">' + displayhost + '</a></font></li>')
+    print('<li><font face="Arial, Helvetica"><a href=\"#' + displayhost + '\">' + displayhost + '</a></font></li>')
 
 print('</ul>')
 
