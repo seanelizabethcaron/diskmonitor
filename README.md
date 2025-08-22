@@ -1,6 +1,6 @@
 Disk Monitor
 ------------
-Sean Caron (scaron@umich.edu)
+Sean Elizabeth Caron (scaron@umich.edu)
 
 Detailed multi-host monitoring of large JBOD arrays
 
@@ -40,7 +40,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, REFERENCES, INDEX, ALTER, CR
 #### Installation
 
 ```
-git clone http://github.com/seantcaron/diskmonitor
+git clone http://github.com/seanelizabethcaron/diskmonitor
 cd diskmonitor
 chmod +x install.sh
 ./install.sh
